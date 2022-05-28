@@ -5,9 +5,6 @@ import * as firebase from 'firebase-admin';
 export class FirebaseService {
   private readonly firebase: firebase.app.App;
   constructor() {
-    console.log('FIREBASE');
-
-    console.log('INIT FIREBASE');
     this.firebase = firebase.initializeApp({
       credential: firebase.credential.cert('src/firebase/firebase.json'),
     });

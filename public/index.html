@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Get Token</title>
+  </head>
+  <body>
+    <style>
+      body {
+        background-color: #282c34;
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+        align-items: center;
+      }
+
+      #google {
+        margin-bottom: 20px;
+        width: 200px;
+        height: 60px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        background-color: #ea4335;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        opacity: 0.8;
+      }
+      .container {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+      }
+    </style>
+
+    <div class="container">
+      <div>
+        <input id="email" value="test@email.com" />
+      </div>
+      <br />
+      <div>
+        <input id="pass" value="testpass" />
+      </div>
+      <br />
+      <br />
+      <div>
+        <button id="google">GOOGLE</button>
+      </div>
+      <br />
+      <div>
+        <button id="login">Email Login</button>
+      </div>
+      <br />
+      <div>
+        <button id="email">Email Register</button>
+      </div>
+      <br />
+      <div>
+        <textarea id="token" cols="24" rows="10"></textarea>
+      </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase.js"></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: 'AIzaSyClkNFP1DpZ5-4mqhtXaHw31SsYu6kNQok',
+        authDomain: 'mangastuff-98127.firebaseapp.com',
+        projectId: 'mangastuff-98127',
+        storageBucket: 'mangastuff-98127.appspot.com',
+        messagingSenderId: '955845935816',
+        appId: '1:955845935816:web:6edb33f3312b3b017a9bfd',
+      };
+
+      firebase.initializeApp(firebaseConfig);
+
+      const auth = firebase.auth();
+
+      async function refresh() {
+        console.log('REFRESH');
+        const token = await auth?.currentUser?.refresh();
+
+        if (token) {
+          console.log('<TOKEN>');
+          console.log(token);
+          console.log('</TOKEN>');
+          document.getElementById('token').innerText = token;
+        }
+      }
+
+      async function googleLogin() {
+        console.log('GOOGLE');
+
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        await auth.signInWithPopup(provider).then(
+          async (result) => {
+            const token = await auth?.currentUser?.getIdToken(true);
+            if (token) {
+              console.log('<TOKEN>');
+              console.log(token);
+              console.log('</TOKEN>');
+              document.getElementById('token').innerText = token;
+            }
+          },
+          function (error) {
+            console.log(error);
+          }
+        );
+      }
+
+      async function email() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('pass').value;
+
+        auth
+          .createUserWithEmailAndPassword(email, password)
+          .then(async (userCredential) => {
+            // Signed in
+            var user = userCredential.user;
+            const token = await auth?.currentUser?.getIdToken(true);
+            if (token) {
+              console.log('<TOKEN>');
+              console.log(token);
+              console.log('</TOKEN>');
+              document.getElementById('token').innerText = token;
+            }
+            // ...
+          })
+          .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // ..
+          });
+      }
+
+      function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('pass').value;
+
+        auth
+          .signInWithEmailAndPassword(email, password)
+          .then(async (userCredential) => {
+            // Signed in
+            var user = userCredential.user;
+            const token = await auth?.currentUser?.getIdToken(true);
+            if (token) {
+              console.log('<TOKEN>');
+              console.log(token);
+              console.log('</TOKEN>');
+              document.getElementById('token').innerText = token;
+            }
+          })
+          .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+          });
+      }
+      document.getElementById('login').addEventListener('click', login);
+      document.getElementById('email').addEventListener('click', email);
+      //document.getElementById('refresh').addEventListener('click', refresh);
+      document.getElementById('google').addEventListener('click', googleLogin);
+    </script>
+  </body>
+</html>
