@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ChapterModule } from './chapter/chapter.module';
 import { GenreModule } from './genre/genre.module';
 import { MangaModule } from './manga/manga.module';
 import { UserModule } from './user/user.module';
@@ -12,6 +13,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     MangaModule,
     GenreModule,
+    ChapterModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       serveRoot: '/public',
