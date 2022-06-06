@@ -44,11 +44,17 @@ export class ChapterController {
 
   @Post('/')
   async createChapter(@Body() chapterDto: ChapterDto) {
+    if (chapterDto.manga) {
+      chapterDto.manga = new Types.ObjectId(chapterDto.manga);
+    }
     return await this.chapterService.create(chapterDto);
   }
 
   @Patch('/:id')
   async updateChapter(@Param('id', ParseObjectIdPipe) _id: Types.ObjectId, @Body() chapterDto: Partial<ChapterDto>) {
+    if (chapterDto.manga) {
+      chapterDto.manga = new Types.ObjectId(chapterDto.manga);
+    }
     return await this.chapterService.update(_id, chapterDto);
   }
 }

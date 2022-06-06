@@ -25,4 +25,9 @@ export class MangaService {
   async findMangas(pag: pagination = { limit: 20, skip: 0, order: 1, sortBy: '_id' }) {
     return (await this.Manga.aggregate([this.aggregationService.facetTotalCount(pag)]))[0];
   }
+
+  async findSimilarManga(_id: Types.ObjectId, pag: pagination = { limit: 20, skip: 0, order: 1, sortBy: '_id' }) {
+    const { genres } = await this.Manga.findById(_id);
+    return (await this.Manga.aggregate([{ $match: { genres } }, this.aggregationService.facetTotalCount(pag)]))[0];
+  }
 }

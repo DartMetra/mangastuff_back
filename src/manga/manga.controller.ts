@@ -13,6 +13,15 @@ import { MangaService } from './manga.service';
 export class MangaController {
   constructor(private readonly mangaService: MangaService) {}
 
+  @Get('/:id/similar')
+  async getSimilarMangaList(@Pagination() pag: pagination, @Param('id', ParseObjectIdPipe) _id: Types.ObjectId) {
+    const { docs, totalCount } = await this.mangaService.findSimilarManga(_id, pag);
+    return {
+      docs,
+      totalCount: totalCount ? (totalCount[0] ? totalCount[0].count : 0) : 0,
+    };
+  }
+
   @Get('/')
   async getMangaList(@Pagination() pag: pagination) {
     const { docs, totalCount } = await this.mangaService.findMangas(pag);
@@ -53,6 +62,9 @@ export class MangaController {
     if (files.banner) {
       mangaDto.banner = files.banner[0].filename;
     }
+    if (mangaDto.genres && mangaDto.genres[0]) {
+      mangaDto.genres = mangaDto.genres.map((genre) => new Types.ObjectId(genre));
+    }
     return await this.mangaService.create(mangaDto);
   }
 
@@ -85,6 +97,9 @@ export class MangaController {
     }
     if (files.banner) {
       mangaDto.banner = files.banner[0].filename;
+    }
+    if (mangaDto.genres && mangaDto.genres[0]) {
+      mangaDto.genres = mangaDto.genres.map((genre) => new Types.ObjectId(genre));
     }
     return await this.mangaService.update(_id, mangaDto);
   }

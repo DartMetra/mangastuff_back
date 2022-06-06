@@ -11,7 +11,7 @@ export class AggregationService {
 
     return {
       $facet: {
-        documents: [SORT, { $skip: pag.skip }, { $limit: pag.limit }],
+        docs: [SORT, { $skip: pag.skip }, { $limit: pag.limit }],
         totalCount: [
           {
             $count: 'count',

@@ -6,7 +6,7 @@ export type MangaDocument = Manga & Document;
 @Schema({ collection: 'Manga', versionKey: false, timestamps: true })
 export class Manga {
   @Prop({ ref: 'User' })
-  contributors: Types.ObjectId[];
+  contributors: string[];
 
   @Prop()
   description: string;
