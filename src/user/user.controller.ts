@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { pagination } from 'src/types/pagination';
@@ -15,34 +15,21 @@ export class UserController {
 
   @Post('/me')
   @UseInterceptors(
-    FileFieldsInterceptor(
-      [
-        { name: 'photo', maxCount: 1 },
-        { name: 'banner', maxCount: 1 },
-      ],
-      {
-        storage: diskStorage({
-          destination: (req, file, cb) => {
-            cb(null, './public/user/' + file.fieldname);
-          },
-          filename: (req, file, cb) => {
-            cb(null, Date.now() + extname(file.originalname));
-          },
-        }),
-      }
-    )
+    FileInterceptor('photo', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          cb(null, './public/user');
+        },
+        filename: (req, file, cb) => {
+          cb(null, Date.now() + extname(file.originalname));
+        },
+      }),
+    })
   )
   @UseGuards(AuthGuard)
-  async createMe(
-    @Body() user: UserDto,
-    @User() tokenUser: any,
-    @UploadedFiles() files: { photo?: Express.Multer.File[]; banner?: Express.Multer.File[] }
-  ) {
-    if (files.photo) {
-      user.photo = files.photo[0].filename;
-    }
-    if (files.banner) {
-      user.banner = files.banner[0].filename;
+  async createMe(@Body() user: UserDto, @User() tokenUser: any, @UploadedFile() photo?: Express.Multer.File) {
+    if (photo) {
+      user.photo = photo.filename;
     }
     return await this.userService.updateByToken(tokenUser, user);
   }

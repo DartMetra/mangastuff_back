@@ -9,7 +9,10 @@ export class Chapter {
   manga: Types.ObjectId;
 
   @Prop()
-  title: string;
+  chapter: number;
+
+  @Prop()
+  volume: number;
 
   @Prop()
   pages: string[];

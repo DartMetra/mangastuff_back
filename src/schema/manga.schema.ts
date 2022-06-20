@@ -18,7 +18,7 @@ export class Manga {
   originalTitle: string;
 
   @Prop()
-  year: string;
+  year: number;
 
   @Prop()
   author: string[];

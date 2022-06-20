@@ -3,7 +3,9 @@ import { Types } from 'mongoose';
 export class ChapterDto {
   manga: Types.ObjectId;
 
-  title: string;
+  chapter: number;
+
+  volume: number;
 
   pages: string[];
 }

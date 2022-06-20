@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Types } from 'mongoose';
 import { diskStorage } from 'multer';
@@ -23,8 +23,23 @@ export class MangaController {
   }
 
   @Get('/')
-  async getMangaList(@Pagination() pag: pagination) {
-    const { docs, totalCount } = await this.mangaService.findMangas(pag);
+  async getMangaList(@Pagination() pag: pagination, @Query() query) {
+    if (query.genres && query.genres[0]) {
+      query.genres = query.genres.map((e) => new Types.ObjectId(e));
+    }
+    if (query.author) {
+      query.author = new Types.ObjectId(query.author);
+    }
+    if (query.year_start) {
+      query.year_start = +query.year_start;
+    }
+    if (query.year_end) {
+      query.year_end = +query.year_end;
+    }
+    if (query.author) {
+      query.author = new Types.ObjectId(query.author);
+    }
+    const { docs, totalCount } = await this.mangaService.filterSearch(pag, query);
     return {
       docs,
       totalCount: totalCount ? (totalCount[0] ? totalCount[0].count : 0) : 0,

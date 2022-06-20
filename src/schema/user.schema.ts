@@ -16,9 +16,6 @@ export class User {
 
   @Prop()
   photo: string;
-
-  @Prop()
-  banner: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

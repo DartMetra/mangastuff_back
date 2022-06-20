@@ -8,7 +8,10 @@ import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly aggregationService: AggregationService, @InjectModel(User.name) private readonly User: Model<User>) {}
+  constructor(
+    private readonly aggregationService: AggregationService,
+    @InjectModel(User.name) private readonly User: Model<User>
+  ) {}
 
   async findUsers(pag: pagination = { limit: 20, skip: 0, order: 1, sortBy: '_id' }) {
     return (await this.User.aggregate([this.aggregationService.facetTotalCount(pag)]))[0];
@@ -42,7 +45,6 @@ export class UserService {
     customer.name = data.name ? data.name : customer.name;
     customer.email = data.email ? data.email : customer.email;
     customer.photo = data.photo ? data.photo : customer.photo;
-    customer.banner = data.banner ? data.banner : customer.banner;
     await customer.save();
 
     return customer;

@@ -22,6 +22,49 @@ export class ChapterService {
     return await this.Chapter.findById(_id);
   }
   async findChapters(pag: pagination = { limit: 20, skip: 0, order: 1, sortBy: '_id' }) {
-    return (await this.Chapter.aggregate([this.aggregationService.facetTotalCount(pag)]))[0];
+    return (
+      await this.Chapter.aggregate([
+        {
+          $lookup: {
+            from: 'Manga',
+            localField: 'manga',
+            foreignField: '_id',
+            as: 'manga',
+          },
+        },
+        {
+          $unwind: {
+            path: '$manga',
+          },
+        },
+        this.aggregationService.facetTotalCount(pag),
+      ])
+    )[0];
+  }
+
+  async findByManga(_id: Types.ObjectId, pag: pagination = { limit: 20, skip: 0, order: 1, sortBy: '_id' }) {
+    return (
+      await this.Chapter.aggregate([
+        { $match: { manga: _id } },
+        {
+          $lookup: {
+            from: 'Manga',
+            localField: 'manga',
+            foreignField: '_id',
+            as: 'manga',
+          },
+        },
+        {
+          $unwind: {
+            path: '$manga',
+          },
+        },
+        this.aggregationService.facetTotalCount(pag),
+      ])
+    )[0];
+  }
+
+  async findByMangaChapter(manga: Types.ObjectId, chapter: number) {
+    return await this.Chapter.findOne({ manga, chapter });
   }
 }
