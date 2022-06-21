@@ -6,7 +6,7 @@ export type AuthorDocument = Author & Document;
 @Schema({ collection: 'Author', versionKey: false, timestamps: true })
 export class Author {
   @Prop({ required: true })
-  name: string;
+  title: string;
 }
 
 export const AuthorSchema = SchemaFactory.createForClass(Author);
